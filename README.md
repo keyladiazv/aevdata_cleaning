@@ -26,11 +26,7 @@ Este repositorio contiene la parte de análisis y limpieza de datos ubicada en `
    analisis_datos/notebooks/01_exploracion_dataset.ipynb
    ```
 
-6. La salida limpia se genera en:
-
-   ```text
-   analisis_datos/data_limpia/registros_limpios.xlsx
-   ```
+6. Revisá los resultados de validación dentro del notebook. La exportación final a Excel queda pendiente hasta validar la limpieza.
 
 ## Qué hace la limpieza
 
@@ -42,7 +38,7 @@ Este repositorio contiene la parte de análisis y limpieza de datos ubicada en `
 | Nombre | Se crea `Nombre_clean`, eliminando HTML, patrones sospechosos y caracteres no informativos. |
 | Duplicados por nombre | Se consolida por `Nombre_clean`, priorizando localizado/encontrado, cédula, teléfono, más campos informativos y fechas recientes. |
 | Datos complementarios | Si la mejor fila no tiene un dato, se completa con el primer dato válido disponible entre sus duplicados. |
-| Exportación | Se escribe un Excel limpio en `analisis_datos/data_limpia/`. |
+| Exportación | Pendiente: todavía no se genera Excel final porque la limpieza sigue en revisión. |
 
 ## Por qué no se sube `aevscraping` ni el Excel
 
