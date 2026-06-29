@@ -1,0 +1,21 @@
+# Repositorio externo usado solo como fuente local
+aevscraping/
+
+# Datos sensibles o generados
+*.xlsx
+*.xls
+*.csv
+*.parquet
+!analisis_datos/data_raw/.gitkeep
+!analisis_datos/data_limpia/.gitkeep
+
+# Python / notebooks
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+.env
+
+# Sistema operativo / editores
+.DS_Store
+Thumbs.db
+.vscode/

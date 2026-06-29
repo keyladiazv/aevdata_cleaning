@@ -1,0 +1,69 @@
+# Limpieza de datos AEV
+
+Este repositorio contiene la parte de análisis y limpieza de datos ubicada en `analisis_datos/`. El objetivo es tomar el archivo consolidado original del scraping, trabajar sobre una copia y generar una versión limpia en Excel para pasos posteriores del pipeline.
+
+> Por privacidad y trazabilidad, este repositorio no versiona el scraping externo ni archivos `.xlsx`, `.csv` o similares.
+
+## Ruta rápida
+
+1. Cloná este repositorio.
+2. Instalá las dependencias:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Conseguí el archivo `todos_registros.xlsx` desde la fuente original de scraping usada para el análisis: [`Amilkir/aevscraping`](https://github.com/Amilkir/aevscraping).
+4. Copialo en:
+
+   ```text
+   analisis_datos/data_raw/todos_registros.xlsx
+   ```
+
+5. Ejecutá el notebook:
+
+   ```text
+   analisis_datos/notebooks/01_exploracion_dataset.ipynb
+   ```
+
+6. La salida limpia se genera en:
+
+   ```text
+   analisis_datos/data_limpia/registros_limpios.xlsx
+   ```
+
+## Qué hace la limpieza
+
+| Área | Decisión |
+|------|----------|
+| Datos originales | Se cargan en `df_raw` y no se modifican. |
+| Datos de trabajo | Se usa `df_clean = df_raw.copy()`. |
+| Cédula | Se crea `Cédula_clean` solo para cédulas de 7 u 8 dígitos válidos, excluyendo valores repetidos como `11111111`. |
+| Nombre | Se crea `Nombre_clean`, eliminando HTML, patrones sospechosos y caracteres no informativos. |
+| Duplicados por nombre | Se consolida por `Nombre_clean`, priorizando localizado/encontrado, cédula, teléfono, más campos informativos y fechas recientes. |
+| Datos complementarios | Si la mejor fila no tiene un dato, se completa con el primer dato válido disponible entre sus duplicados. |
+| Exportación | Se escribe un Excel limpio en `analisis_datos/data_limpia/`. |
+
+## Por qué no se sube `aevscraping` ni el Excel
+
+La carpeta `aevscraping` proviene de otro repositorio y se usa solo como fuente local. Además, `todos_registros.xlsx` puede contener datos personales como nombres, cédulas y teléfonos. Por eso se deja fuera del control de versiones.
+
+La persona que ejecute este proyecto debe obtener el archivo fuente por separado y ubicarlo en `analisis_datos/data_raw/`.
+
+## Estructura
+
+```text
+.
+├── analisis_datos/
+│   ├── AGENT.md
+│   ├── README.md
+│   ├── data_raw/
+│   │   └── .gitkeep
+│   ├── data_limpia/
+│   │   └── .gitkeep
+│   └── notebooks/
+│       └── 01_exploracion_dataset.ipynb
+├── .gitignore
+├── README.md
+└── requirements.txt
+```
