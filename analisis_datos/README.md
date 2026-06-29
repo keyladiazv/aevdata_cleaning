@@ -22,19 +22,32 @@ Esta carpeta contiene el notebook de exploración y limpieza de datos para el co
    notebooks/01_exploracion_dataset.ipynb
    ```
 
-4. Revisá los resultados de validación dentro del notebook. La exportación final a Excel queda pendiente hasta validar la limpieza.
+4. Revisá los resultados de validación y construcción de entidades dentro del notebook. La exportación final a Excel queda pendiente hasta validar la limpieza.
 
-## Criterio principal de duplicados
+## Flujo del notebook
 
-Los duplicados por `Nombre_clean` se reducen consolidando información. Primero se ordenan los registros por prioridad de evidencia:
+El notebook mantiene un flujo progresivo para no mezclar responsabilidades:
 
-1. localizado/encontrado;
-2. cédula válida;
-3. teléfono válido;
-4. mayor cantidad de campos informativos;
-5. fechas más recientes.
+```text
+df_raw -> df_clean -> df_validated -> df_entities
+```
 
-Luego se toma el primer dato válido por columna dentro del grupo. Así no se pierde información cuando la ubicación, la cédula y el teléfono están repartidos entre distintas filas duplicadas.
+- `df_raw`: datos originales cargados desde Excel.
+- `df_clean`: normalización de texto, acentos, espacios, teléfonos, cédulas, fechas y tipos básicos.
+- `df_validated`: invalidación de valores fuera de regla, como cédulas, teléfonos, edades, URLs y estados no válidos.
+- `df_entities`: agrupación de registros que probablemente representan a la misma persona.
+
+## Criterio de entidades
+
+`df_entities` deja de pensar en filas aisladas y construye grupos de identidad.
+
+La lógica une registros mediante:
+
+1. `Cédula`, como clave fuerte.
+2. `Teléfono Contacto`, como clave fuerte.
+3. `Nombre` + `Edad` + `Última Ubicación`, como clave débil combinada.
+
+No se usa `Nombre` por sí solo porque puede fusionar personas distintas con nombres iguales.
 
 ## Estado de exportación
 

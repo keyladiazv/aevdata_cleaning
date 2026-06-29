@@ -32,9 +32,6 @@ Fecha Registro
 Fecha Actualización   
 Es Menor    
 Fuente    
-longitud_cedula 
-Cédula_clean 
-Nombre_clean 
 
 - Utiliza siempre estos nombres de DataFrame.
 - No inventes columnas que no existan.
@@ -98,7 +95,7 @@ Prioriza el uso de:
 
 Flujo esperado:
 
-Carga → Calidad
+df_raw (datos originales) -> df_clean (normlizar formatos) -> df_validated (eliminar o corregir datos inválidos) -> df_entities (Aquí dejas de pensar en filas y empiezas a pensar en personas. Cada fila proviene de una fuente distinta, pero varias filas pueden representar a la misma persona.)
 
 Reglas adicionales para notebooks
 
