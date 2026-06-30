@@ -4,6 +4,19 @@ Este repositorio contiene la parte de análisis y limpieza de datos ubicada en `
 
 > Por privacidad y trazabilidad, este repositorio no versiona el scraping externo ni archivos `.xlsx`, `.csv` o similares.
 
+## Gobernanza del fork Open-Vzla-SOS
+
+Este repositorio es un **fork operativo mantenido por Open-Vzla-SOS**.
+
+- Repositorio original upstream: [`keyladiazv/aevdata_cleaning`](https://github.com/keyladiazv/aevdata_cleaning).
+- Función dentro del ecosistema: limpieza, normalización, deduplicación y control de calidad.
+- La rama `main` se reserva para sincronización con upstream.
+- La rama `develop` es la rama de integración de Open-Vzla-SOS.
+- Todo cambio propio debe realizarse en ramas `feature/*`, `fix/*`, `docs/*`, `test/*` o `chore/*`.
+- Los cambios propios deben llegar a `develop` mediante pull request.
+- No deben ejecutarse scrapers, notebooks o procesos que utilicen datos reales, llamen servicios externos, escriban en APIs o afecten ambientes de producción sin autorización explícita. Las pruebas locales y aisladas deberán utilizar datos ficticios o anonimizados.
+- Se identificaron riesgos heredados del upstream que deberán gestionarse mediante tareas separadas por los responsables correspondientes; su remediación queda fuera de este cambio.
+
 ## Ruta rápida
 
 1. Cloná este repositorio.
