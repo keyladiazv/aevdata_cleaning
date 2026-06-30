@@ -95,7 +95,9 @@ Prioriza el uso de:
 
 Flujo esperado:
 
-df_raw (datos originales) -> df_clean (normlizar formatos) -> df_validated (eliminar o corregir datos inválidos) -> df_entities (Aquí dejas de pensar en filas y empiezas a pensar en personas. Cada fila proviene de una fuente distinta, pero varias filas pueden representar a la misma persona.)
+df_raw (datos originales) -> df_clean (normlizar formatos) -> df_validated (eliminar o corregir datos inválidos) -> df_validos(eliminar HTML, eliminar XSS / scripts, normalización unicode, solo letras y espacios, filtar calidad de nombres y patrones basura,) -> df_entidad (Aquí dejas de pensar en filas y empiezas a pensar en personas. Cada fila proviene de una fuente distinta, pero varias filas pueden representar a la misma persona.) -> df_final
+
+Resivar bien el notebook, 01_exploration_datset porque esa fase de discovery permitió saber que nos encontramos en los datos para saber como y que limpiar en los datos
 
 Reglas adicionales para notebooks
 
