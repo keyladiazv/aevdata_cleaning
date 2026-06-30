@@ -1,58 +1,140 @@
-# Análisis de datos
+# Análisis de datos AEV
 
-Esta carpeta contiene el notebook de exploración y limpieza de datos para el consolidado original de AEV.
+Pipeline profesional para limpiar, validar, construir entidades y exportar a Excel el consolidado `todos_registros.xlsx` generado por el scraping.
 
-## Cómo ejecutar
+> Alcance: este módulo trabaja solo dentro de `analisis_datos/`. El scraping es una fuente externa de referencia y no forma parte de este pipeline.
 
-1. Instalá dependencias desde la raíz del proyecto:
+## Ruta rápida
 
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. Colocá el archivo fuente en:
-
-   ```text
-   analisis_datos/data_raw/todos_registros.xlsx
-   ```
-
-3. Ejecutá en orden:
-
-   ```text
-   notebooks/01_exploracion_dataset.ipynb
-   ```
-
-4. Revisá los resultados de validación y construcción de entidades dentro del notebook. La exportación final a Excel queda pendiente hasta validar la limpieza.
-
-## Flujo del notebook
-
-El notebook mantiene un flujo progresivo para no mezclar responsabilidades:
-
-```text
-df_raw -> df_clean -> df_validated -> df_entities
+```bash
+pip install -r analisis_datos/requirements.txt
+python -m analisis_datos.src.pipeline
 ```
 
+Entrada esperada:
+
+```text
+analisis_datos/data_raw/todos_registros.xlsx
+```
+
+Salida generada:
+
+```text
+analisis_datos/data_limpia/registros_limpios.xlsx
+```
+
+También podés indicar rutas explícitas:
+
+```bash
+python -m analisis_datos.src.pipeline \
+  --input analisis_datos/data_raw/todos_registros.xlsx \
+  --output analisis_datos/data_limpia/registros_limpios.xlsx
+```
+
+## Flujo del pipeline
+
+```text
+Scraping (solo referencia)
+↓
+Carga
+↓
+Limpieza
+↓
+Normalización
+↓
+Validaciones
+↓
+Entidades
+↓
+Deduplicación
+↓
+Consolidación
+↓
+Exportación a Excel (.xlsx)
+```
+
+El notebook `notebooks/01_exploracion_dataset.ipynb` queda como evidencia del análisis exploratorio y no debe modificarse para ejecutar el pipeline productivo.
+
+## Arquitectura
+
+```text
+analisis_datos/
+├── AGENT.md
+├── README.md
+├── RECOMENDACIONES.md
+├── requirements.txt
+├── data_raw/
+│   └── todos_registros.xlsx        # entrada local, no versionada
+├── data_limpia/
+│   └── registros_limpios.xlsx      # salida local, no versionada
+├── notebooks/
+│   └── 01_exploracion_dataset.ipynb
+└── src/
+    ├── config.py
+    ├── io.py
+    ├── cleaning.py
+    ├── normalization.py
+    ├── validation.py
+    ├── entities.py
+    ├── deduplication.py
+    ├── consolidation.py
+    ├── export.py
+    ├── utils.py
+    └── pipeline.py
+```
+
+## Módulos
+
+| Módulo | Responsabilidad |
+|---|---|
+| `config.py` | Rutas, columnas esperadas y reglas constantes. |
+| `io.py` | Carga del Excel y normalización de nombres de columnas. |
+| `normalization.py` | Normalización de texto, cédulas, teléfonos, fechas, edad y categorías. |
+| `validation.py` | Reglas de calidad para cédula, teléfono, edad, URL y estado. |
+| `cleaning.py` | Limpieza específica de nombres y filtros de calidad. |
+| `deduplication.py` | Deduplicación previa por cédula. |
+| `entities.py` | Construcción de entidades con union-find. |
+| `consolidation.py` | Selección del mejor registro por entidad y separación de nombres múltiples. |
+| `export.py` | Exportación final a Excel. |
+| `pipeline.py` | Orquestación end-to-end y CLI. |
+
+## Entradas y salidas
+
+| Tipo | Ruta | Descripción |
+|---|---|---|
+| Entrada | `data_raw/todos_registros.xlsx` | Consolidado original obtenido desde scraping. |
+| Salida | `data_limpia/registros_limpios.xlsx` | Dataset limpio, validado, deduplicado y consolidado. |
+| Evidencia | `notebooks/01_exploracion_dataset.ipynb` | Notebook exploratorio original; no se modifica. |
+| Recomendaciones | `RECOMENDACIONES.md` | Mejoras o riesgos detectados que no se implementan en este alcance. |
+
+## Lógica conservada del notebook
+
 - `df_raw`: datos originales cargados desde Excel.
-- `df_clean`: normalización de texto, acentos, espacios, teléfonos, cédulas, fechas y tipos básicos.
-- `df_validated`: invalidación de valores fuera de regla, como cédulas, teléfonos, edades, URLs y estados no válidos.
-- `df_entities`: agrupación de registros que probablemente representan a la misma persona.
+- `df_clean`: normalización de formatos básicos.
+- `df_validated`: invalidación de datos fuera de regla.
+- `df_entities`: creación de `Nombre_clean` y preparación para entidades.
+- `df_validos`: registros con nombres válidos para consolidación.
+- `df_entidad`: grupos de identidad con `entity_id`.
+- `df_final`: mejor registro por entidad, con nombres múltiples separados.
 
-## Criterio de entidades
+## Instalación
 
-`df_entities` deja de pensar en filas aisladas y construye grupos de identidad.
+Se recomienda usar un entorno virtual:
 
-La lógica une registros mediante:
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r analisis_datos/requirements.txt
+```
 
-1. `Cédula`, como clave fuerte.
-2. `Teléfono Contacto`, como clave fuerte.
-3. `Nombre` + `Edad` + `Última Ubicación`, como clave débil combinada.
+En Linux/macOS:
 
-No se usa `Nombre` por sí solo porque puede fusionar personas distintas con nombres iguales.
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r analisis_datos/requirements.txt
+```
 
-## Estado de exportación
+## Privacidad
 
-La exportación a `data_limpia/registros_limpios.xlsx` está planificada, pero todavía no se ejecuta desde el notebook porque la limpieza sigue en revisión.
-
-## Nota de privacidad
-
-Los archivos de datos no se versionan. La carpeta conserva solo `.gitkeep` para indicar dónde colocar entradas y salidas.
+Los archivos Excel de entrada y salida pueden contener datos personales. No deben versionarse.
